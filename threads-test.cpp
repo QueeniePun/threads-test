@@ -2,24 +2,55 @@
 //
 
 #include <iostream>
+#include <thread>
+#include <chrono>
+using namespace std;
+
+
+
+void doTask(const long long int timeInMilliseconds)
+{
+    auto start = chrono::steady_clock::now();
+
+    this_thread::sleep_for(std::chrono::milliseconds(timeInMilliseconds));
+
+    auto end = chrono::steady_clock::now();
+    cout << "Task took " << chrono::duration_cast<chrono::milliseconds>(end - start).count() << "ms. \n";
+
+}
 
 int main()
 {
-    std::cout << "Hello World!\n";
+    auto startSingle = chrono::steady_clock::now();
+
+    cout << "Single-threaded\n";
+    doTask(150);
+    doTask(200);
+    doTask(300);
+    doTask(250);
+    doTask(860);
+
+    auto endSingle = chrono::steady_clock::now(); 
+
+    auto startMulti = chrono::steady_clock::now();
+    cout << "Multi-threaded\n";
+    thread thread_1 = thread(doTask, 150);
+    thread thread_2 = thread(doTask, 200);
+    thread thread_3 = thread(doTask, 300);
+    thread thread_4 = thread(doTask, 250);
+    thread thread_5 = thread(doTask, 860);
+    thread_1.join();
+    thread_2.join();
+    thread_3.join();
+    thread_4.join();
+    thread_5.join();
+    //thread producer = thread();
+    //thread consumer = thread(); 
+
+
+    auto endMulti = chrono::steady_clock::now();
+    cout << "Single-threaded took " << chrono::duration_cast<chrono::milliseconds>(endSingle - startSingle).count() << "ms. \n";
+    cout << "Multi-threaded took " << chrono::duration_cast<chrono::milliseconds>(endMulti - startMulti).count() << "ms. \n";
+
+    return 0;
 }
-
-
-
-
-
-
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
-
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
